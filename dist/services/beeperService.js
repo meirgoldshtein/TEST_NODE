@@ -71,34 +71,26 @@ class PostService {
             return res;
         });
     }
-    static startBombing(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield (0, fileDAL_1.getFileData)('beepers');
-            console.log("bommmmmmmmmmmm");
-            if (!data) {
-                return false;
-            }
-            const index = data.findIndex((beeper) => beeper._id === id);
-            if (index === -1) {
-                return false;
-            }
-            data[index].status = beeperStatus_1.default.detonated;
-            console.log(data[index].status);
-            data[index].exploded_at = new Date();
-            const res = yield (0, fileDAL_1.writeFileData)('beepers', data);
-            return res;
+    static startBombing(data, index) {
+        data[index].status = beeperStatus_1.default.deployed;
+        return new Promise((resolve) => {
+            setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                console.log("booooom");
+                data[index].status = beeperStatus_1.default.detonated;
+                data[index].exploded_at = new Date();
+                const res = yield (0, fileDAL_1.writeFileData)('beepers', data);
+                resolve(res);
+            }), 5000);
         });
     }
     static updateStatus(id, location) {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield (0, fileDAL_1.getFileData)('beepers');
-            if (!data) {
+            if (!data)
                 return false;
-            }
             const index = data.findIndex((beeper) => beeper._id === id);
-            if (index === -1) {
+            if (index === -1)
                 return false;
-            }
             const prev_status = data[index].status;
             switch (prev_status) {
                 case beeperStatus_1.default.manufactured:
@@ -111,10 +103,16 @@ class PostService {
                     data[index].latitude = location.LAT;
                     data[index].longitude = location.LON;
                     data[index].status = beeperStatus_1.default.deployed;
-                    yield (0, fileDAL_1.writeFileData)('beepers', data);
-                    setInterval(() => __awaiter(this, void 0, void 0, function* () {
-                        this.startBombing(id);
-                    }), 10000);
+                    try {
+                        yield (0, fileDAL_1.writeFileData)('beepers', data);
+                        console.log("Data saved successfully");
+                    }
+                    catch (error) {
+                        console.error("Error saving data:", error);
+                    }
+                    console.log("3 seconds to boom");
+                    const bombingResult = yield this.startBombing(data, index);
+                    console.log("Bombing completed", bombingResult);
                     return true;
                 case beeperStatus_1.default.deployed:
                     return false;

@@ -2,6 +2,9 @@
   "name": "social",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "nodemonConfig": {
+    "ignore": ["*.json"]
+  },
 
   "scripts": {
     "start": "nodemon dist/index.js"

@@ -26,3 +26,14 @@ export const writeFileData = async <T>(resource: string, data: T[]) : Promise<bo
     }
 }
 
+export const writeFileSync =  <T>(resource: string, data: T[]) : boolean => {
+    try {
+        const stringData = JSON.stringify(data, null, 2);
+        fs.writeFile(`${__dirname}/../../data/${resource}.json`, stringData, { encoding: 'utf8' });
+        console.log('Data saved to file');
+        return true;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}

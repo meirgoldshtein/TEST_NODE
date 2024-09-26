@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.writeFileData = exports.getFileData = void 0;
+exports.writeFileSync = exports.writeFileData = exports.getFileData = void 0;
 const promises_1 = __importDefault(require("fs/promises"));
 const getFileData = (resource) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -38,3 +38,16 @@ const writeFileData = (resource, data) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.writeFileData = writeFileData;
+const writeFileSync = (resource, data) => {
+    try {
+        const stringData = JSON.stringify(data, null, 2);
+        promises_1.default.writeFile(`${__dirname}/../../data/${resource}.json`, stringData, { encoding: 'utf8' });
+        console.log('Data saved to file');
+        return true;
+    }
+    catch (err) {
+        console.log(err);
+        return false;
+    }
+};
+exports.writeFileSync = writeFileSync;

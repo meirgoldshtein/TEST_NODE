@@ -1,8 +1,9 @@
 import Beeper from "../models/Beeper";
 import NewBeeperDTO  from "../interfaces/NewBeeperDTO";
-import { getFileData, writeFileData } from '../config/fileDAL';
+import { getFileData, writeFileData, writeFileSync } from '../config/fileDAL';
 import beeperStatus from "../enums/beeperStatus";
 import locationDTO from "../interfaces/locationDTO";
+import fs from 'fs'
 
 export default class PostService {
     public static async createBeeper(post: NewBeeperDTO) : Promise<boolean | string> {
@@ -59,28 +60,26 @@ export default class PostService {
     }
 
 
-    public static async startBombing(id: string) : Promise<void | boolean> {
-        
-         const data = await getFileData<Beeper>('beepers');
-        console.log("bommmmmmmmmmmm")
-        if (!data) {return false;}
-        const index  = data.findIndex((beeper) => beeper._id === id);
-        if (index === -1) {return false;}
-        data[index].status = beeperStatus.detonated
-        console.log(data[index].status);
-        data[index].exploded_at = new Date();
-        const res = await writeFileData<Beeper>('beepers', data);
-        return res;
+    public static startBombing(data: Beeper[], index: number): Promise<void | boolean> {
+        data[index].status = beeperStatus.deployed;
+        return new Promise((resolve) => {
+            setTimeout(async () => {
+                console.log("booooom");
+                data[index].status = beeperStatus.detonated;
+                data[index].exploded_at = new Date();
+                const res = await writeFileData<Beeper>('beepers', data);
+                resolve(res);
+            }, 5000);
+        });
     }
 
-    public static async updateStatus(id: string, location: locationDTO) : Promise<boolean> {
-       
+    public static async updateStatus(id: string, location: locationDTO): Promise<boolean> {
         const data = await getFileData<Beeper>('beepers');
-        if (!data) {return false}
-
-        const index  = data.findIndex((beeper) => beeper._id === id);
-        if (index === -1) {return false}
-
+        if (!data) return false;
+    
+        const index = data.findIndex((beeper) => beeper._id === id);
+        if (index === -1) return false;
+    
         const prev_status = data[index].status;
         switch (prev_status) {
             case beeperStatus.manufactured:
@@ -93,10 +92,16 @@ export default class PostService {
                 data[index].latitude = location.LAT;
                 data[index].longitude = location.LON;
                 data[index].status = beeperStatus.deployed;
-                await writeFileData<Beeper>('beepers', data);
-                setInterval(async () => {
-                     this.startBombing(id);
-                }, 10000);
+                try {
+                    await writeFileData<Beeper>('beepers', data);
+                    console.log("Data saved successfully");
+                } catch (error) {
+                    console.error("Error saving data:", error);
+                }
+                console.log("3 seconds to boom");
+                
+                const bombingResult = await this.startBombing(data, index);
+                console.log("Bombing completed", bombingResult);
                 return true;
             case beeperStatus.deployed:
                 return false;            
