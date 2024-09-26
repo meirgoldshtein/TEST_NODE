@@ -3,7 +3,7 @@ import exp, {Router, Request, Response} from 'express';
 import Beeper from '../models/Beeper';
 import NewBeeperDTO from '../interfaces/NewBeeperDTO';
 import beeperService from '../services/beeperService';
-
+import locationDTO from '../interfaces/locationDTO';
 const router : Router = exp.Router();
 
 // קבלת ביפרים לפי סטטוס
@@ -99,55 +99,50 @@ router.post('/',async (req : Request<any, any, NewBeeperDTO>, res : exp.Response
 })
 
 
-// router.put('/:id/status',async (req : Request<any,any,any, {status: string}>, res : Response):Promise<void> => {
-//     try {
-//         const{post_id, user_id} = req.query
-//         if (!post_id || !user_id) {
-//             throw new Error('post_id and user_id are required');
-//         }
-//         const registerInPost = await PostService.addLikeToPost(post_id, user_id);
-//         const registerInUser = await PostService.registerLikeInUser(post_id, user_id);
-//         if (registerInPost && registerInUser){
-//             res.status(200).json({
-//                 err: false,
-//                 message: 'new like added',
-//                 data: null
-//             });
-//         }
-//         else throw new Error('can not add new like');
-    
-//     }
-//     catch(err: any) {
-//         console.log(err)
-//         res.status(400).json({
-//             err: true,
-//             message: err.message,
-//             data: null
-//         });
-//     }
-// })
+router.put('/:id/status',async (req : Request<any, any, locationDTO>, res : Response):Promise<void> => {
+    try {
+        const locationObj = req.body;
+        const updateLocation = await beeperService.updateStatus(req.params.id, locationObj);
+        if (updateLocation ){
+            res.status(200).json({
+                err: false,
+                message: 'the beeper location updated',
+                data: null
+            });
+        }
+        else throw new Error('can not updated');   
+    }
+    catch(err: any) {
+        console.log(err)
+        res.status(400).json({
+            err: true,
+            message: err.message,
+            data: null
+        });
+    }
+})
 
 
-// router.delete('/:id',async (req : Request, res : exp.Response):Promise<void> => {
-//     try {
-//         const result = await PostService.deletePost(req.params.id);
-//         if (result){
-//             res.status(200).json({
-//                 err: false,
-//                 message: 'delete ok',
-//                 data: undefined
-//             });
-//         }
-//         else throw new Error('can not delete post');        
-//     }
-//     catch(err) {
-//         res.status(400).json({
-//             err: true,
-//             message: err,
-//             data: null
-//         });
-//     }
-// })
+router.delete('/:id',async (req : Request, res : exp.Response):Promise<void> => {
+    try {
+        const result = await beeperService.deleteBeeper(req.params.id);
+        if (result){
+            res.status(200).json({
+                err: false,
+                message: 'delete ok',
+                data: undefined
+            });
+        }
+        else throw new Error('can not delete beeper');        
+    }
+    catch(err) {
+        res.status(400).json({
+            err: true,
+            message: err,
+            data: null
+        });
+    }
+})
 
 
 

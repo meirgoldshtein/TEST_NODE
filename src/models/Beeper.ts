@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import beeperStatus from '../enams/beeperStatus';
+import beeperStatus from '../enums/beeperStatus';
 export default class Beeper {
     _id : string
     name : string

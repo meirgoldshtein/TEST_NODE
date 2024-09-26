@@ -103,50 +103,48 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
 }));
-// router.put('/:id/status',async (req : Request<any,any,any, {status: string}>, res : Response):Promise<void> => {
-//     try {
-//         const{post_id, user_id} = req.query
-//         if (!post_id || !user_id) {
-//             throw new Error('post_id and user_id are required');
-//         }
-//         const registerInPost = await PostService.addLikeToPost(post_id, user_id);
-//         const registerInUser = await PostService.registerLikeInUser(post_id, user_id);
-//         if (registerInPost && registerInUser){
-//             res.status(200).json({
-//                 err: false,
-//                 message: 'new like added',
-//                 data: null
-//             });
-//         }
-//         else throw new Error('can not add new like');
-//     }
-//     catch(err: any) {
-//         console.log(err)
-//         res.status(400).json({
-//             err: true,
-//             message: err.message,
-//             data: null
-//         });
-//     }
-// })
-// router.delete('/:id',async (req : Request, res : exp.Response):Promise<void> => {
-//     try {
-//         const result = await PostService.deletePost(req.params.id);
-//         if (result){
-//             res.status(200).json({
-//                 err: false,
-//                 message: 'delete ok',
-//                 data: undefined
-//             });
-//         }
-//         else throw new Error('can not delete post');        
-//     }
-//     catch(err) {
-//         res.status(400).json({
-//             err: true,
-//             message: err,
-//             data: null
-//         });
-//     }
-// })
+router.put('/:id/status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const locationObj = req.body;
+        const updateLocation = yield beeperService_1.default.updateStatus(req.params.id, locationObj);
+        if (updateLocation) {
+            res.status(200).json({
+                err: false,
+                message: 'the beeper location updated',
+                data: null
+            });
+        }
+        else
+            throw new Error('can not updated');
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).json({
+            err: true,
+            message: err.message,
+            data: null
+        });
+    }
+}));
+router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield beeperService_1.default.deleteBeeper(req.params.id);
+        if (result) {
+            res.status(200).json({
+                err: false,
+                message: 'delete ok',
+                data: undefined
+            });
+        }
+        else
+            throw new Error('can not delete beeper');
+    }
+    catch (err) {
+        res.status(400).json({
+            err: true,
+            message: err,
+            data: null
+        });
+    }
+}));
 exports.default = router;

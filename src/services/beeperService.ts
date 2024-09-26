@@ -1,7 +1,8 @@
 import Beeper from "../models/Beeper";
 import NewBeeperDTO  from "../interfaces/NewBeeperDTO";
 import { getFileData, writeFileData } from '../config/fileDAL';
-
+import beeperStatus from "../enums/beeperStatus";
+import locationDTO from "../interfaces/locationDTO";
 
 export default class PostService {
     public static async createBeeper(post: NewBeeperDTO) : Promise<boolean | string> {
@@ -43,131 +44,65 @@ export default class PostService {
     }
 
 
-    // public static async addLikeToPost(post_id: string, user_id: string) : Promise<boolean> {
-    //     const data = await getFileData<Post>('posts');
-    //     if (!data) {
-    //         return false;
-    //     }
-    //     const index  = data.findIndex((post) => post.post_id === post_id);
-    //     if (index === -1) {
-    //         return false;
-    //     }
-    //     const post = data[index];
-    //     if (post.likes_by.includes(user_id)) {
-    //         return false;
-    //     }
-    //     post.likes_by.push(user_id);
-    //     post.likes_count += 1;
-    //     const res = await writeFileData<Post>('posts', data);
-    //     return res;
-    // }
+    public static async deleteBeeper(id: string) : Promise<boolean> {
+        const data = await getFileData<Beeper>('beepers');
+        if (!data) {
+            return false;
+        }
+        const index  = data.findIndex((beeper) => beeper._id === id);
+        if (index === -1) {
+            return false;
+        }
+        data.splice(index, 1);
+        const res = await writeFileData<Beeper>('beepers', data);
+        return res;
+    }
 
 
-    // public static async addDislikeToPost(post_id: string, user_id: string) : Promise<boolean> {
-    //     const data = await getFileData<Post>('posts');
-    //     if (!data) {
-    //         return false;
-    //     }
-    //     const index  = data.findIndex((post) => post.post_id === post_id);
-    //     if (index === -1) {
-    //         return false;
-    //     }
-    //     const post = data[index];
-    //     if (post.dislikes_by.includes(user_id)) {
-    //         return false;
-    //     }
-    //     post.dislikes_by.push(user_id);
-    //     post.dislikes_count += 1;
-    //     const res = await writeFileData<Post>('posts', data);
-    //     return res;
-    // }
+    public static async startBombing(id: string) : Promise<void | boolean> {
+        
+         const data = await getFileData<Beeper>('beepers');
+        console.log("bommmmmmmmmmmm")
+        if (!data) {return false;}
+        const index  = data.findIndex((beeper) => beeper._id === id);
+        if (index === -1) {return false;}
+        data[index].status = beeperStatus.detonated
+        console.log(data[index].status);
+        data[index].exploded_at = new Date();
+        const res = await writeFileData<Beeper>('beepers', data);
+        return res;
+    }
 
+    public static async updateStatus(id: string, location: locationDTO) : Promise<boolean> {
+       
+        const data = await getFileData<Beeper>('beepers');
+        if (!data) {return false}
 
-    // public static async registerLikeInUser(post_id: string, user_id: string) : Promise<boolean> {
-    //     const data = await getFileData<User>('users');
-    //     if (!data) {
-    //         return false;
-    //     }
-    //     const index  = data.findIndex((user) => user.user_id === user_id);
-    //     if (index === -1) {
-    //         return false;
-    //     }
-    //     const user = data[index];
-    //     if (user.like_posts_id.includes(post_id)) {
-    //         return false;
-    //     }
-    //     user.like_posts_id.push(post_id);
-    //     const res = await writeFileData('users', data);
-    //     return res;
-    // }
+        const index  = data.findIndex((beeper) => beeper._id === id);
+        if (index === -1) {return false}
 
-
-    // public static async registerDislikeInPost(post_id: string, user_id: string) : Promise<boolean> {
-    //     const data = await getFileData<Post>('posts');
-    //     if (!data) {
-    //         return false;
-    //     }
-    //     const index  = data.findIndex((post) => post.post_id === post_id);
-    //     if (index === -1) {
-    //         return false;
-    //     }
-    //     const post = data[index];
-    //     if (post.dislikes_by.includes(user_id)) {
-    //         return false;
-    //     }
-    //     post.dislikes_by.push(user_id);
-    //     const res = await writeFileData('posts', data);
-    //     return res;
-    // }
-
-
-    // public static async registerDislikeInUser(post_id: string, user_id: string) : Promise<boolean> {
-    //     const data = await getFileData<User>('users');
-    //     if (!data) {
-    //         return false;
-    //     }
-    //     const index  = data.findIndex((user) => user.user_id === user_id);
-    //     if (index === -1) {
-    //         return false;
-    //     }
-    //     const user = data[index];
-    //     if (user.dislike_posts_id.includes(post_id)) {
-    //         return false;
-    //     }
-    //     user.dislike_posts_id.push(post_id);
-    //     const res = await writeFileData('users', data);
-    //     return res;
-    // }
-
-
-    // public static async deletePost(post_id: string) : Promise<boolean> {
-    //     const data = await getFileData<Post>('posts');
-    //     if (!data) {
-    //         return false;
-    //     }
-    //     const index  = data.findIndex((post) => post.post_id === post_id);
-    //     if (index === -1) {
-    //         return false;
-    //     }
-    //     data.splice(index, 1);
-    //     const res = await writeFileData<Post>('posts', data);
-    //     return res;
-    // }
-
-
-    // public static async editPost(updatedPost: editPostDTO ) : Promise<boolean> {
-    //     const {post_id, content} = updatedPost;
-    //     const data = await getFileData<Post>('posts');
-    //     if (!data) {
-    //         return false;
-    //     }
-    //     const index = data.findIndex((post) => post.post_id === post_id);
-    //     if (index === -1) {
-    //         return false;
-    //     }
-    //     data[index].content = content;
-    //     const res = writeFileData<Post>('posts', data);
-    //     return res;
-    // }
+        const prev_status = data[index].status;
+        switch (prev_status) {
+            case beeperStatus.manufactured:
+                data[index].status = beeperStatus.assembled;
+                break;
+            case beeperStatus.assembled:
+                data[index].status = beeperStatus.shipped;
+                break;
+            case beeperStatus.shipped:
+                data[index].latitude = location.LAT;
+                data[index].longitude = location.LON;
+                data[index].status = beeperStatus.deployed;
+                await writeFileData<Beeper>('beepers', data);
+                setInterval(async () => {
+                     this.startBombing(id);
+                }, 10000);
+                return true;
+            case beeperStatus.deployed:
+                return false;            
+        }
+        const res = await writeFileData<Beeper>('beepers', data);
+        return res;
+    }
 
 }
