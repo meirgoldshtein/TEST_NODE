@@ -20,6 +20,7 @@ export default class PostService {
         const res = await writeFileData<Beeper>('beepers', data);
         return res ? newBeeper : res;
     }
+
     // קבלת כל הביפרים
     public static async getAllBeepers(): Promise<boolean | Beeper[]> {
         const data = await getFileData<Beeper>('beepers');
@@ -171,17 +172,14 @@ export default class PostService {
         try {
             const data = await getFileData<Beeper>('beepers');
             if (!data) return false;
-
             const index = data.findIndex((beeper) => beeper._id === id);
             if (index === -1) return false;
-
             if (!this.validationsLocation2(statusObj)) return false
 
-            let current_status = data[index].status;
+            const current_status = data[index].status;
             const new_status = statusObj.status;
 
-            if (!this.validatNewStatus(new_status, current_status)) return false
-            
+            if (!this.validatNewStatus(new_status, current_status)) return false           
             data[index].status = new_status;
 
             if (new_status == beeperStatus.deployed) {
@@ -197,15 +195,13 @@ export default class PostService {
                     return res
                 }, 10000)
                 return data[index]
-            }
-                
+            }           
             const res = await writeFileData<Beeper>('beepers', data);
             return res ? data[index] : res;
         } catch (err) {
             console.log(err)
             return false
         }
-
     }
 
 

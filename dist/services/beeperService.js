@@ -180,7 +180,7 @@ class PostService {
                     return false;
                 if (!this.validationsLocation2(statusObj))
                     return false;
-                let current_status = data[index].status;
+                const current_status = data[index].status;
                 const new_status = statusObj.status;
                 if (!this.validatNewStatus(new_status, current_status))
                     return false;
