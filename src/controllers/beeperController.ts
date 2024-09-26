@@ -4,6 +4,8 @@ import Beeper from '../models/Beeper';
 import NewBeeperDTO from '../interfaces/NewBeeperDTO';
 import beeperService from '../services/beeperService';
 import locationDTO from '../interfaces/locationDTO';
+import location2DTO from '../interfaces/location2DTO';
+
 const router : Router = exp.Router();
 
 // קבלת ביפרים לפי סטטוס
@@ -12,11 +14,7 @@ router.get('/status/:status',async (req : Request, res : Response):Promise<void>
         const result : boolean | Beeper[] = await beeperService.searchByStatus(req.params.status);
         if (result){
             console.log(req.params.filterString)
-            res.status(200).json({
-                err: false,
-                message: 'success search', 
-                data: result
-            });
+            res.status(200).json(result);
         }
         else throw new Error('can not find');      
     }
@@ -35,13 +33,8 @@ router.get('/:id',async (req : Request, res : Response):Promise<void> => {
     try {
         const beeper : boolean | Beeper = await beeperService.searchById(req.params.id);
         if (beeper){
-            res.status(200).json({
-                err: false,
-                message: 'success to get beeper',
-                data: beeper
-            });
-        }
-      
+            res.status(200).json(beeper);
+        }  
     }
     catch(err) {
         res.status(400).json({
@@ -58,11 +51,7 @@ router.get('/',async (req : Request, res : Response):Promise<void> => {
         const result : boolean | Beeper[] = await beeperService.getAllBeepers();
         if (result){
             console.log(req.params.filterString)
-            res.status(200).json({
-                err: false,
-                message: 'success search', 
-                data: result
-            });
+            res.status(200).json(result);
         }
         else throw new Error('can not add new post');      
     }
@@ -78,13 +67,10 @@ router.get('/',async (req : Request, res : Response):Promise<void> => {
 // רישום ביפר חדש
 router.post('/',async (req : Request<any, any, NewBeeperDTO>, res : exp.Response):Promise<void> => {
     try {
+        console.log("fgdhdfhdfh")
         const result = await beeperService.createBeeper(req.body);
         if (result){
-            res.status(200).json({
-                err: false,
-                message: 'new beeper added',
-                data: {beeper_id: result}
-            });
+            res.status(200).json(result);
         }
         else throw new Error('can not add new beeper');   
         
@@ -99,16 +85,14 @@ router.post('/',async (req : Request<any, any, NewBeeperDTO>, res : exp.Response
 })
 
 
-router.put('/:id/status',async (req : Request<any, any, locationDTO>, res : Response):Promise<void> => {
+router.put('/:id/status',async (req : Request<any, any,  locationDTO>, res : Response):Promise<void> => {
+    
     try {
         const locationObj = req.body;
-        const updateLocation = await beeperService.updateStatus(req.params.id, locationObj);
-        if (updateLocation ){
-            res.status(200).json({
-                err: false,
-                message: 'the beeper location updated',
-                data: null
-            });
+        
+        const result = await beeperService.updateStatus(req.params.id, locationObj);
+        if (result){
+            res.status(200).json(result);
         }
         else throw new Error('can not updated');   
     }
@@ -121,6 +105,31 @@ router.put('/:id/status',async (req : Request<any, any, locationDTO>, res : Resp
         });
     }
 })
+
+
+
+router.patch('/:id/status',async (req : Request<any, any, location2DTO>, res : Response):Promise<void> => {
+    try {
+        const locationObj = req.body;
+        
+    
+        const updateLocation2 = await beeperService.updateStatus2(req.params.id, locationObj as location2DTO);
+        if (updateLocation2 ){
+            res.status(200).json(updateLocation2);
+        }
+        else throw new Error('can not updated');   
+    }
+    catch(err: any) {
+        console.log(err)
+        res.status(400).json({
+            err: true,
+            message: err.message,
+            data: null
+        });
+    }
+})
+
+
 
 
 router.delete('/:id',async (req : Request, res : exp.Response):Promise<void> => {

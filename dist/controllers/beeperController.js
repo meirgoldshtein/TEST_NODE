@@ -21,11 +21,7 @@ router.get('/status/:status', (req, res) => __awaiter(void 0, void 0, void 0, fu
         const result = yield beeperService_1.default.searchByStatus(req.params.status);
         if (result) {
             console.log(req.params.filterString);
-            res.status(200).json({
-                err: false,
-                message: 'success search',
-                data: result
-            });
+            res.status(200).json(result);
         }
         else
             throw new Error('can not find');
@@ -43,11 +39,7 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const beeper = yield beeperService_1.default.searchById(req.params.id);
         if (beeper) {
-            res.status(200).json({
-                err: false,
-                message: 'success to get beeper',
-                data: beeper
-            });
+            res.status(200).json(beeper);
         }
     }
     catch (err) {
@@ -64,11 +56,7 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield beeperService_1.default.getAllBeepers();
         if (result) {
             console.log(req.params.filterString);
-            res.status(200).json({
-                err: false,
-                message: 'success search',
-                data: result
-            });
+            res.status(200).json(result);
         }
         else
             throw new Error('can not add new post');
@@ -84,13 +72,10 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 // רישום ביפר חדש
 router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("fgdhdfhdfh");
         const result = yield beeperService_1.default.createBeeper(req.body);
         if (result) {
-            res.status(200).json({
-                err: false,
-                message: 'new beeper added',
-                data: { beeper_id: result }
-            });
+            res.status(200).json(result);
         }
         else
             throw new Error('can not add new beeper');
@@ -106,13 +91,28 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 router.put('/:id/status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const locationObj = req.body;
-        const updateLocation = yield beeperService_1.default.updateStatus(req.params.id, locationObj);
-        if (updateLocation) {
-            res.status(200).json({
-                err: false,
-                message: 'the beeper location updated',
-                data: null
-            });
+        const result = yield beeperService_1.default.updateStatus(req.params.id, locationObj);
+        if (result) {
+            res.status(200).json(result);
+        }
+        else
+            throw new Error('can not updated');
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).json({
+            err: true,
+            message: err.message,
+            data: null
+        });
+    }
+}));
+router.patch('/:id/status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const locationObj = req.body;
+        const updateLocation2 = yield beeperService_1.default.updateStatus2(req.params.id, locationObj);
+        if (updateLocation2) {
+            res.status(200).json(updateLocation2);
         }
         else
             throw new Error('can not updated');
