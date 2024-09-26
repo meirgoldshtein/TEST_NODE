@@ -138,7 +138,6 @@ class PostService {
     // פונקצייה ראשית לטיפול בעדכון סטטוס בהתאם למצב הקודם
     static updateStatus(id, location) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("ggggggggggggg");
             if (!this.validationsLocation(location))
                 return false;
             const data = yield (0, fileDAL_1.getFileData)('beepers');
@@ -149,8 +148,6 @@ class PostService {
                 return false;
             const prev_status = data[index].status;
             const new_status = this.getNextStatus(prev_status);
-            console.log(prev_status);
-            console.log(new_status);
             data[index].status = new_status;
             if (new_status == beeperStatus_1.default.deployed) {
                 const bombingResult = yield this.startBombing(data, index, location);

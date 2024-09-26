@@ -133,7 +133,6 @@ export default class PostService {
 
     // פונקצייה ראשית לטיפול בעדכון סטטוס בהתאם למצב הקודם
     public static async updateStatus(id: string, location: locationDTO): Promise<boolean | Beeper> {
-        console.log("ggggggggggggg")
         if (!this.validationsLocation(location)) return false
 
         const data = await getFileData<Beeper>('beepers');
@@ -144,9 +143,6 @@ export default class PostService {
         
         const prev_status = data[index].status;
         const new_status = this.getNextStatus(prev_status);
-        console.log(prev_status)
-        console.log(new_status)
-               
         data[index].status = new_status;        
         if(new_status == beeperStatus.deployed){
             const bombingResult = await this.startBombing(data, index, location);
